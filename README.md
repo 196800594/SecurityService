@@ -9,8 +9,7 @@
 | JWT_SECRET           | openssl rand -base64 32 |
 | JWT_EXPIRATION_HOURS |           int           |
 
-
-**Table Struct** (*MySQL 8.0*)
+### **Table Struct** (*MySQL 8.0*)
 ```
 CREATE TABLE users (
     uuid BINARY(16) PRIMARY KEY,
@@ -19,7 +18,7 @@ CREATE TABLE users (
     nickname VARCHAR(64) NOT NULL
 );
 ```
-**APIs**
+### **APIs**
 - [x] Login API
 - ``url>> users/pw_auth/login``
 - Request Body (*Json*)
