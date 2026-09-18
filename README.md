@@ -8,6 +8,8 @@
 | DATABASE_URL         |        MySQL Url        |
 | JWT_SECRET           | openssl rand -base64 32 |
 | JWT_EXPIRATION_HOURS |           int           |
+
+
 **Table Struct** (*MySQL 8.0*)
 ```
 CREATE TABLE users (
