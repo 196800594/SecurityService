@@ -75,5 +75,5 @@ Status Code: 409
 "data": null
 }
 ```
-- [ ] Update API
+- [x] Update API
 - [ ] Drop API

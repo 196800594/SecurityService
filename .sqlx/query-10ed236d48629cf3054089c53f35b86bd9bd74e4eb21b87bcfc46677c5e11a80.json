@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT IGNORE INTO users (uuid, username, hash_pw, nickname) VALUES (?, ?, ?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "10ed236d48629cf3054089c53f35b86bd9bd74e4eb21b87bcfc46677c5e11a80"
+}

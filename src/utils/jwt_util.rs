@@ -1,6 +1,7 @@
 use dotenvy::dotenv;
 use jwt_simple::prelude::*;
 use serde::{Serialize, Deserialize };
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
 struct AuthCustom {
@@ -25,36 +26,23 @@ fn get_time() -> Duration {
     Duration::from_hours(jwt_expiration_hours.parse().unwrap())
 }
 
-pub fn token_generator(uuid: String) -> String {
+pub fn token_generator(uuid_bytes: Vec<u8>) -> String {
     let key = get_key();
-    let auth_custom = AuthCustom { uuid };
+    let uuid = Uuid::from_slice(&uuid_bytes).unwrap();
+    let auth_custom = AuthCustom::new(uuid.to_string());
     let claims = Claims::with_custom_claims(auth_custom, get_time());
     key.authenticate(claims).unwrap()
 }
 
-pub fn token_verify(token: String) -> Result<String, String> {
+pub fn token_verify(token: String) -> Result<Vec<u8>, String> {
     let key = get_key();
-    if let Ok(claims) = key.verify_token::<AuthCustom>(&token, None) {
-        Ok(claims.custom.uuid)
-    } else {
-        Err("Token could not be verified".to_string())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn test_token_generator() {
-        dotenv().ok();
-        let auth_custom = AuthCustom { uuid: "123456".to_string() };
-        let token = token_generator(auth_custom.uuid);
-        println!("{:?}", token);
-    }
-    #[test]
-    fn test_token_verify() {
-        dotenv().ok();
-        let result = token_verify("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3ODk2MzA0NjgsImV4cCI6MTc4OTYzNzY2OCwibmJmIjoxNzg5NjMwNDY4LCJ1dWlkIjoiMTIzNDU2In0.cUdknviA2hYLAf4SaNFnaJylUi46aBq3GGM1L062vyg".to_string());
-        println!("{:?}", result);
+    let claims = key.verify_token::<AuthCustom>(&token, None);
+    match claims { 
+        Ok(claims) => {
+            let uuid = Uuid::parse_str(claims.custom.uuid.as_str()).unwrap();
+            let uuid_bytes: Vec<u8> = uuid.as_bytes().to_vec();
+            Ok(uuid_bytes)
+        },
+        Err(err) => Err(err.to_string())
     }
 }

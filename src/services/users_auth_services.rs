@@ -15,8 +15,7 @@ pub async fn users_pw_auth_login(pool: &MySqlPool, request: LoginRequest) -> (Re
             if (utils::hash_verify(request.password, result.hash_pw)) {
                 //将uuid结合时间戳生成 token
                 let uuid_bytes: Vec<u8> = result.uuid;
-                let uuid = Uuid::from_slice(&uuid_bytes).unwrap();
-                let token = utils::token_generator(uuid.to_string());
+                let token = utils::token_generator(uuid_bytes);
                 let response = LoginResponse::new(token);
                 (Ok(Success::LoginSuccess), Some(response))
             }
@@ -48,6 +47,6 @@ pub async fn users_pw_auth_register(pool: &MySqlPool, request: RegisterRequest) 
             }
             else { (Err(Error::UsernameAlreadyExists), None)  }
         }
-        Err(_e) => { (Err(Error::InternalError), None) }
+        Err(_) => { (Err(Error::InternalError), None) }
     }
 }
