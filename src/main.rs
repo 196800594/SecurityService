@@ -17,9 +17,10 @@ pub async fn main() ->Result<(), sqlx::Error> {
     let pool: MySqlPool = MySqlPoolOptions::new()
         .max_connections(10)
         .min_connections(2)
-        .max_lifetime(std::time::Duration::from_secs(3600))
+        .max_lifetime(std::time::Duration::from_secs(1800))
         .idle_timeout(std::time::Duration::from_secs(600))
-        .acquire_timeout(std::time::Duration::from_secs(30))
+        .acquire_timeout(std::time::Duration::from_secs(5))
+        .test_before_acquire(true)
         .connect(&database_url)
         .await?;
     let state = AppState{ pool };

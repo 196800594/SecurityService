@@ -1,12 +1,21 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct UpdateRequest {
+#[serde(deny_unknown_fields)]
+pub struct UpdateUsernameRequest {
     pub token: String,
-    pub username: Option<String>,
-    pub password: Option<String>,
-    pub nickname: Option<String>,
-}
+    pub username: String,
 
-#[derive(Serialize)]
-pub struct UpdateResponse {}
+}
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UpdatePasswordRequest {
+    pub token: String,
+    pub password: String,
+}
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UpdateNicknameRequest {
+    pub token: String,
+    pub nickname: String,
+}
