@@ -3,7 +3,7 @@ use serde::Serialize;
 #[derive(Serialize)]
 pub struct Response<T> {
     message: String,
-    pub data: Option<T>,
+    data: Option<T>,
 }
 impl<T> Response<T> {
     

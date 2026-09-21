@@ -1,12 +1,13 @@
 use sqlx::MySqlPool;
-use crate::models::{CoreError, UpdateNicknameRequest, UpdatePasswordRequest, UpdateUsernameRequest};
+use crate::errors::UserError;
+use crate::models::{InternalError, UpdateNicknameRequest, UpdatePasswordRequest, UpdateUsernameRequest};
 use crate::utils;
 
-pub async fn users_update_username(pool: &MySqlPool, request: UpdateUsernameRequest) -> Result<(), CoreError> {
+pub async fn users_update_username(pool: &MySqlPool, request: UpdateUsernameRequest) -> Result<(), UserError> {
     //解析 token 获取用户的 uuid
     let uuid = utils::token_verify(request.token).map_err(|e| {
         eprintln!("{}", e);
-        CoreError::TokenExpired
+        UserError::TokenExpired
     })?;
     let row = sqlx::query!("UPDATE users SET username = ? WHERE uuid = ?",
         request.username,
@@ -15,20 +16,20 @@ pub async fn users_update_username(pool: &MySqlPool, request: UpdateUsernameRequ
          .await
         .map_err(|e|{
             eprintln!("{}", e);
-            CoreError::InternalServerError
+            UserError::InternalServerError
     })?;
-    if row.rows_affected() == 1 { Ok(()) } else { Err(CoreError::UserNotFound) }
+    if row.rows_affected() == 1 { Ok(()) } else { Err(UserError::UserNotFound) }
 }
 
-pub async fn users_update_password(pool: &MySqlPool, request: UpdatePasswordRequest) -> Result<(), CoreError> {
+pub async fn users_update_password(pool: &MySqlPool, request: UpdatePasswordRequest) -> Result<(), UserError> {
     //解析 token 获取用户的 uuid
     let uuid = utils::token_verify(request.token).map_err(|e| {
         eprintln!("{}", e);
-        CoreError::TokenExpired
+        UserError::TokenExpired
     })?;
     let hash_pw = utils::hash_generate(request.password).map_err(|e| {
         eprintln!("{}", e);
-        CoreError::InternalServerError
+        UserError::InternalServerError
     })?;
     let row = sqlx::query!("UPDATE users SET hash_pw = ? WHERE uuid = ?",
         hash_pw,
@@ -37,16 +38,16 @@ pub async fn users_update_password(pool: &MySqlPool, request: UpdatePasswordRequ
         .await
         .map_err(|e|{
             eprintln!("{}", e);
-            CoreError::InternalServerError
+            UserError::InternalServerError
         })?;
-    if row.rows_affected() == 1 { Ok(()) } else { Err(CoreError::UserNotFound) }
+    if row.rows_affected() == 1 { Ok(()) } else { Err(UserError::UserNotFound) }
 }
 
-pub async fn users_update_nickname(pool: &MySqlPool, request: UpdateNicknameRequest) -> Result<(), CoreError> {
+pub async fn users_update_nickname(pool: &MySqlPool, request: UpdateNicknameRequest) -> Result<(), UserError> {
     //解析 token 获取用户的 uuid
     let uuid = utils::token_verify(request.token).map_err(|e| {
         eprintln!("{}", e);
-        CoreError::TokenExpired
+        UserError::TokenExpired
     })?;
     let row = sqlx::query!("UPDATE users SET nickname = ? WHERE uuid = ?",
         request.nickname,
@@ -55,9 +56,9 @@ pub async fn users_update_nickname(pool: &MySqlPool, request: UpdateNicknameRequ
         .await
         .map_err(|e|{
             eprintln!("{}", e);
-            CoreError::InternalServerError
+            UserError::InternalServerError
         })?;
-    if row.rows_affected() == 1 { Ok(()) } else { Err(CoreError::UserNotFound) }
+    if row.rows_affected() == 1 { Ok(()) } else { Err(UserError::UserNotFound) }
 }
 
 

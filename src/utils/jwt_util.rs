@@ -1,7 +1,7 @@
 use jwt_simple::prelude::*;
 use serde::{Serialize, Deserialize };
 use uuid::Uuid;
-use crate::models::CoreError;
+use crate::models::InternalError;
 
 #[derive(Serialize, Deserialize)]
 struct AuthCustom {
@@ -26,18 +26,18 @@ fn get_time() -> Duration {
     Duration::from_hours(jwt_expiration_hours.parse().expect("JWT_EXPIRATION_HOURS"))
 }
 
-pub fn token_generator(uuid_bytes: Vec<u8>) -> Result<String, CoreError> {
+pub fn token_generator(uuid_bytes: Vec<u8>) -> Result<String, InternalError> {
     let key = get_key();
     let uuid = Uuid::from_slice(&uuid_bytes)?;
     let auth_custom = AuthCustom::new(uuid.to_string());
     let claims = Claims::with_custom_claims(auth_custom, get_time());
-    let token = key.authenticate(claims).map_err(CoreError::JwtGenerate)?;
+    let token = key.authenticate(claims).map_err(InternalError::JwtGenerate)?;
     Ok(token)
 }
 
-pub fn token_verify(token: String) -> Result<Vec<u8>, CoreError> {
+pub fn token_verify(token: String) -> Result<Vec<u8>, InternalError> {
     let key = get_key();
-    let claims = key.verify_token::<AuthCustom>(&token, None).map_err(CoreError::JwtVerify)?;
+    let claims = key.verify_token::<AuthCustom>(&token, None).map_err(InternalError::JwtVerify)?;
     let uuid = Uuid::parse_str(claims.custom.uuid.as_str())?;
     let uuid_bytes: Vec<u8> = uuid.as_bytes().to_vec();
     Ok(uuid_bytes)

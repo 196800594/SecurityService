@@ -5,7 +5,7 @@ use thiserror::Error;
 use crate::models;
 
 #[derive(Error, Debug)]
-pub enum CoreError {
+pub enum UserError {
     #[error("登录失败，请检查用户名或密码")]
     Unauthorized,
     #[error("用户名已存在")]
@@ -16,32 +16,19 @@ pub enum CoreError {
     TokenExpired,
     #[error("服务器内部错误")]
     InternalServerError,
-    #[error("哈希校验失败")]
-    HashVerify,
-    #[error("哈希解析失败")]
-    HashAnalysis,
-    #[error("哈希生成失败")]
-    HashGenerate,
-    #[error("令牌校验失败>> {0}")]
-    JwtVerify(#[source] jwt_simple::Error),
-    #[error("令牌生成失败>> {0}")]
-    JwtGenerate(#[source] jwt_simple::Error),
-    #[error("数据库错误>> {0}")]
-    Database(#[from] sqlx::Error),
-    #[error("Uuid格式无效>> {0}")]
-    InvalidUuid(#[from] uuid::Error),
 }
-impl CoreError {
+impl UserError {
     fn status_code(&self) -> StatusCode {
         match self {
-            CoreError::Unauthorized => StatusCode::UNAUTHORIZED,
-            CoreError::UsernameAlreadyExists => StatusCode::CONFLICT,
-            CoreError::HashVerify => StatusCode::CONFLICT,
+            UserError::Unauthorized => StatusCode::UNAUTHORIZED,
+            UserError::UsernameAlreadyExists => StatusCode::CONFLICT,
+            UserError::UserNotFound => StatusCode::NOT_FOUND,
+            UserError::TokenExpired => StatusCode::CONFLICT,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
-impl IntoResponse for CoreError {
+impl IntoResponse for UserError {
     fn into_response(self) -> axum::response::Response {
         let status_code = self.status_code();
         let error_response: models::response::Response<()> = models::Response::new(self.to_string(), None);
