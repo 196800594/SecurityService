@@ -1,0 +1,17 @@
+server:
+  error:
+    internal_server_error: "Internal server error"
+auth:
+  success:
+    login: "Login successful"
+    register: "Registration successful"
+  error:
+    unauthorized: "Login failed, please check your username or password"
+    username_already_exists: "Username already exists"
+    user_not_found: "User not found"
+    token_expired: "Login session expired, please log in again"
+update:
+  success:
+    username: "Username updated successfully"
+    password: "Password updated successfully"
+    nickname: "Nickname updated successfully"

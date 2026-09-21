@@ -4,18 +4,18 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum InternalError {
-    #[error("哈希校验失败")]
+    #[error("Hash verification failed")]
     HashVerify,
-    #[error("哈希解析失败")]
+    #[error("Hash analysis failed")]
     HashAnalysis,
-    #[error("哈希生成失败")]
+    #[error("Hash generation failed")]
     HashGenerate,
-    #[error("令牌校验失败>> {0}")]
+    #[error("Token verification failed >> {0}")]
     JwtVerify(#[source] jwt_simple::Error),
-    #[error("令牌生成失败>> {0}")]
+    #[error("Token generation failed >> {0}")]
     JwtGenerate(#[source] jwt_simple::Error),
-    #[error("数据库错误>> {0}")]
+    #[error("Database error >> {0}")]
     Database(#[from] sqlx::Error),
-    #[error("Uuid格式无效>> {0}")]
+    #[error("Invalid UUID format >> {0}")]
     InvalidUuid(#[from] uuid::Error),
 }
