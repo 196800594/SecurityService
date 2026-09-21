@@ -12,6 +12,8 @@ pub enum CoreError {
     UsernameAlreadyExists,
     #[error("用户不存在")]
     UserNotFound,
+    #[error("登录信息过期，请重新登录")]
+    TokenExpired,
     #[error("服务器内部错误")]
     InternalServerError,
     #[error("哈希校验失败")]
@@ -20,13 +22,11 @@ pub enum CoreError {
     HashAnalysis,
     #[error("哈希生成失败")]
     HashGenerate,
-    #[error("登录信息过期，请重新登录")]
-    TokenExpired,
     #[error("令牌校验失败>> {0}")]
     JwtVerify(#[source] jwt_simple::Error),
     #[error("令牌生成失败>> {0}")]
     JwtGenerate(#[source] jwt_simple::Error),
-    #[error("数据库错误")]
+    #[error("数据库错误>> {0}")]
     Database(#[from] sqlx::Error),
     #[error("Uuid格式无效>> {0}")]
     InvalidUuid(#[from] uuid::Error),
